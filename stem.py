@@ -1,8 +1,9 @@
 import flask,json
-from nltk.stem.porter import PorterStemmer
+from nltk.corpus import stopwords
 from nltk import word_tokenize
-import string
+from nltk.stem.porter import PorterStemmer
 from nltk.stem import WordNetLemmatizer
+import string
 
 app = flask.Flask('Whisk Stemmer')
 
@@ -19,6 +20,7 @@ def main():
       query = full_params['value']['query']
       p = PorterStemmer()
       wn = WordNetLemmatizer()
+      all_stop_words = stopwords.words('english') + list(string.punctuation)
       res = [z
              for z
              in [wn.lemmatize(y)
@@ -26,7 +28,7 @@ def main():
                  in [p.stem(x)
                      for x
                      in word_tokenize(query)]]
-             if z not in string.punctuation]
+             if z not in all_stop_words]
       
       dict_results = {'result': " ".join(res) }
       json_results = json.dumps(dict_results)
